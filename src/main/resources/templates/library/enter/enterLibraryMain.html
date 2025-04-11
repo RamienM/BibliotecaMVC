@@ -26,7 +26,7 @@
 
     <div class="row">
         <div class="col-lg-3">
-            <a th:href="@{/library/addBook}" class="btn btn-primary btn-sm mb-3">Añadir Libro</a>
+            <a th:href="@{/library/enter/addBook}" class="btn btn-primary btn-sm mb-3">Añadir Libro</a>
         </div>
     </div>
 
@@ -36,6 +36,7 @@
             <th>Titulo del libro</th>
             <th>Autor del libro</th>
             <th>ISBN del libro</th>
+            <th>Disponibilidad</th>
             <th>Acciones</th>
         </tr>
         </thead>
@@ -44,6 +45,7 @@
             <td th:text="${book.getTitle()}"></td>
             <td th:text="${book.getAuthor()}"></td>
             <td th:text="${book.getIsbn()}"></td>
+            <td th:text="${book.getBooked()} ? 'Reservado' : 'Disponible'"></td>
             <td>
                 <a th:href="@{/library/deleteBook/{id}(id=${book.getIsbn()})}"
                    class="btn btn-danger">Eliminar</a>
@@ -51,7 +53,7 @@
         </tr>
         </tbody>
     </table>
-    <a href="/main" class="btn btn-success">Volver</a>
+    <a href="/library/libraryMain" class="btn btn-success">Volver</a>
 </div>
 </body>
 </html>

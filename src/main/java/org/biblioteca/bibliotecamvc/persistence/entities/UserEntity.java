@@ -1,13 +1,31 @@
 package org.biblioteca.bibliotecamvc.persistence.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.List;
+
+@Getter
+@Setter
 @Entity
-@Table(name = "User")
-public class User {
+@Table(name = "User_table")
+public class UserEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "username", unique = true)
     private String username;
+
+    @Column(name = "password")
     private String password;
+
+    @Column(name= "admin")
+    private Boolean admin = false; //Lo ideal es un enumerado
+
+     @Column(name = "deleted")
+     private Boolean deleted = false;
+
+
 }

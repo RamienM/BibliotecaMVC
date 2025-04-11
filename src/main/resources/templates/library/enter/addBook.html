@@ -18,17 +18,26 @@
             <span class="navbar-toggler-icon"></span>
         </button>
     </nav>
-    <form action="#" th:action="@{/library/addBook}" th:object="${BookDTO}" method="POST">
+    <form action="#" th:action="@{/library/enter/addBook}" th:object="${BookDTO}" method="POST">
         <table class="table table-striped table-bordered">
             <tr>
-                <td><label>ISBN</label></td>
-                <td><input type="text" th:field="*{isbn}"></td>
+                <td><label>Seleccionar Libro</label></td>
+                <td>
+                    <select th:field="*{isbn}" class="form-control">
+                        <option value="" disabled selected>-- Elige un libro --</option>
+                        <option th:each="libro : ${libros}"
+                                th:value="${libro.getIsbn()}"
+                                th:text="${libro.getTitle()}">
+                        </option>
+                    </select>
+                </td>
             </tr>
         </table>
+
         <div class="row">
             <div class="mx-auto">
                 <input type="submit" value="Submit" class="btn btn-primary">
-                <a class="btn btn-danger" href="/library/libraryMain">Volver</a>
+                <a class="btn btn-danger" href="/library/enterLibraryMain">Volver</a>
             </div>
         </div>
     </form>

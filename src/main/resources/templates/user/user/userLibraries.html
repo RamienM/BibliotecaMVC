@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User - Biblioteca</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+
+    <a class="navbar-brand" href="#">User Biblioteca</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+</nav>
+<div class="container">
+
+    <div class="row">
+        <h1> Lista de Blibliotecas</h1>
+    </div>
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th>Nombre</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="library: ${libraries}">
+            <td th:text="${library.getName()}"></td>
+            <td>
+                <a th:href="@{/user/user/userBooksLibrary/{id}(id = ${library.getId()})}"
+                   class="btn btn-primary">Libros</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="/user/user/userMain" class="btn btn-success">Volver</a>
+</div>
+</body>
+</html>

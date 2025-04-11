@@ -1,7 +1,7 @@
 package org.biblioteca.bibliotecamvc.business.exception.book;
 
-public class BookNotFound extends RuntimeException {
-    public BookNotFound(String message) {
+public class BookNotFoundException extends RuntimeException {
+    public BookNotFoundException(String message) {
         super(message);
     }
 }

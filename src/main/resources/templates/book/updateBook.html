@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+</head>
+<body>
+<div>
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+
+        <a class="navbar-brand" href="#">Editar Libro</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+    <form action="#" th:action="@{/book/updateBook/{id}(id = *{isbn})}" th:object="${BookDTO}" method="POST">
+        <table class="table table-striped table-bordered">
+            <tr>
+                <td><label>Titulo</label></td>
+                <td><input type="text" th:field="*{title}"></td>
+            </tr>
+            <tr>
+                <td><label>Autor</label></td>
+                <td><input type="text" th:field="*{author}"></td>
+            </tr>
+            <tr>
+                <td><label>ISBN</label></td>
+                <td><input type="text" th:field="*{isbn}"></td>
+            </tr>
+        </table>
+        <div class="row">
+            <div class="mx-auto">
+                <input type="submit" value="Submit" class="btn btn-primary">
+                <a class="btn btn-danger" href="/book/bookMain">Volver</a>
+            </div>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>
