@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 @AllArgsConstructor
-public class indexController {
+public class IndexController {
     private UserService userService;
 
     @GetMapping("/main")
