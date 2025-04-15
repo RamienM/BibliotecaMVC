@@ -11,14 +11,8 @@ import java.util.Optional;
 @Repository
 public interface BookJPARepository extends JpaRepository<BookEntity, Integer> {
     Optional<BookEntity> getByIsbn(String isbn);
-
-    @Query("select b from BookEntity b join b.users u on u.id =:id where b.booked = true and b.deleted = false ")
-    List<BookEntity> getAllByUsers_Id(Integer id);
-
-    @Query("select b from BookEntity b join b.users u on u.id =:id")
-    List<BookEntity> getLogs(Integer id);
-    
-    boolean existsByIsbnAndUsers_Id(String isbn, Integer userId);
-
     List<BookEntity> getAllByDeleted_False();
+
+    @Query("select b from UserEntity u join u.borrows bo join bo.log lo on lo.deleted = false join lo.bookEntity b on b.deleted=false join lo.libraryEntity li on li.deleted = false where u.id = :id and bo.returned = false")
+    List<BookEntity> getAllBooksByUser(Integer id);
 }

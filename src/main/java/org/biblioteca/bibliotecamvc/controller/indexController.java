@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.biblioteca.bibliotecamvc.business.dto.UserDTO;
 import org.biblioteca.bibliotecamvc.business.dto.UserRegisterDTO;
 import org.biblioteca.bibliotecamvc.business.exception.user.PasswordNotMatchException;
+import org.biblioteca.bibliotecamvc.business.exception.user.UserIsDeletedException;
 import org.biblioteca.bibliotecamvc.business.exception.user.UserNotFoundException;
 import org.biblioteca.bibliotecamvc.business.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -46,8 +47,7 @@ public class indexController {
             if (user.getAdmin()) return "redirect:/main";
             else return "redirect:/user/user/userMain";
 
-
-        }catch (PasswordNotMatchException | UserNotFoundException e) {
+        }catch (PasswordNotMatchException | UserNotFoundException | UserIsDeletedException e) {
             System.err.println(e.getMessage());
         }
         return "redirect:/";

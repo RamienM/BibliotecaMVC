@@ -3,14 +3,10 @@ package org.biblioteca.bibliotecamvc.business.service;
 import lombok.AllArgsConstructor;
 import org.biblioteca.bibliotecamvc.business.dto.UserDTO;
 import org.biblioteca.bibliotecamvc.business.dto.UserRegisterDTO;
-import org.biblioteca.bibliotecamvc.business.exception.book.BookIsBookedException;
-import org.biblioteca.bibliotecamvc.business.exception.book.BookNotFoundException;
 import org.biblioteca.bibliotecamvc.business.exception.user.*;
 import org.biblioteca.bibliotecamvc.business.mapper.UserMapper;
 import org.biblioteca.bibliotecamvc.business.service.interfaces.BasicCRUD;
-import org.biblioteca.bibliotecamvc.persistence.entities.BookEntity;
 import org.biblioteca.bibliotecamvc.persistence.entities.UserEntity;
-import org.biblioteca.bibliotecamvc.persistence.repository.BookJPARepository;
 import org.biblioteca.bibliotecamvc.persistence.repository.UserJPARepository;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +20,6 @@ public class UserService implements BasicCRUD<UserDTO,String> {
     private final UserJPARepository userRepository;
     private final UserMapper userMapper;
     private final UserJPARepository userJPARepository;
-    private final BookJPARepository bookJPARepository;
 
     @Override
     public List<UserDTO> findAll() {
@@ -68,6 +63,7 @@ public class UserService implements BasicCRUD<UserDTO,String> {
         UserEntity oldUser = userEntity.get();
         oldUser.setUsername(userRegisterDTO.getUsername().isEmpty() ? oldUser.getUsername() : userRegisterDTO.getUsername());
         oldUser.setPassword(userRegisterDTO.getPassword().isEmpty() ? oldUser.getPassword() : userRegisterDTO.getPassword());
+        oldUser.setAdmin(userRegisterDTO.getAdmin()==null ? oldUser.getAdmin() : userRegisterDTO.getAdmin());
         userRepository.save(oldUser);
     }
 
@@ -103,41 +99,6 @@ public class UserService implements BasicCRUD<UserDTO,String> {
         if(oldUser.getDeleted()) throw new UserIsDeletedException("User is deleted");
         if (!oldUser.getPassword().equals(userRegisterDTO.getPassword())) throw new PasswordNotMatchException("Password not match");
         return userMapper.toDTO(oldUser);
-    }
-
-    /**
-     * TODO se tiene que cambiar
-     * El usuario pide prestado un libro.
-     * @param isbn ISBN del libro que desea reservar
-     * @param userId Id del usuario que desea hacer la reserva
-     */
-    public void borrowBook(String isbn, Integer userId) {
-        Optional<BookEntity> bookEntity = bookJPARepository.getByIsbn(isbn);
-        if (bookEntity.isEmpty()) throw new BookNotFoundException("Book don`t found with: " + isbn);
-        BookEntity book = bookEntity.get();
-        if(book.getBooked()) throw new BookIsBookedException("Book is already booked");
-        Optional<UserEntity> userEntity = userJPARepository.findById(userId);
-        if (userEntity.isEmpty()) throw new UserNotFoundException("User not found");
-        if (bookJPARepository.existsByIsbnAndUsers_Id(isbn, userId)) throw new UserAlreadyBookedThisBookException("User already booked this book before");
-        book.setBooked(true);
-        book.getUsers().add(userEntity.get());
-        bookJPARepository.save(book);
-    }
-
-    /**
-     * TODO se tiene que cambiar
-     * El usuario devuelve un libro.
-     * @param isbn ISBN del libro que se desea devolver.
-     * @param userId Id del usuario que desea devolver un libro.
-     */
-    public void returnBook(String isbn, Integer userId){
-        Optional<BookEntity> bookEntity = bookJPARepository.getByIsbn(isbn);
-        if (bookEntity.isEmpty()) throw new BookNotFoundException("Book don`t found with: " + isbn);
-        BookEntity book = bookEntity.get();
-        Optional<UserEntity> userEntity = userJPARepository.findById(userId);
-        if (userEntity.isEmpty()) throw new UserNotFoundException("User not found");
-        book.setBooked(false);
-        bookJPARepository.save(book);
     }
 
 }

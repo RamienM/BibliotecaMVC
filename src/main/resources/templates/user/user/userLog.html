@@ -29,15 +29,15 @@
         <tr>
             <th>Titulo del libro</th>
             <th>Autor del libro</th>
-            <th>ISBN del libro</th>
+            <th>Biblioteca</th>
 
         </tr>
         </thead>
         <tbody>
-        <tr th:each="book: ${books}">
-            <td th:text="${book.getTitle()}"></td>
-            <td th:text="${book.getAuthor()}"></td>
-            <td th:text="${book.getIsbn()}"></td>
+        <tr th:each="log: ${logs}">
+            <td th:text="${log.getBookTitle()}"></td>
+            <td th:text="${log.getBookAuthor()}"></td>
+            <td th:text="${log.getLibraryName()}"></td>
         </tr>
         </tbody>
     </table>

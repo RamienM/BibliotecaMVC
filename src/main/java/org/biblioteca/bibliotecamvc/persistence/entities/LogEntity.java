@@ -17,7 +17,10 @@ public class LogEntity {
     private Integer id;
 
     @Column(name = "booked")
-    private boolean booked = false;
+    private Boolean booked = false;
+
+    @Column(name = "deleted")
+    private Boolean deleted = false;
 
     @ManyToOne
     private BookEntity bookEntity;
@@ -25,11 +28,6 @@ public class LogEntity {
     @ManyToOne
     private LibraryEntity libraryEntity;
 
-    @ManyToMany
-    @JoinTable(
-            name = "log_user",
-            joinColumns = @JoinColumn(name = "log_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<UserEntity> users = new ArrayList<>();
+    @OneToMany(mappedBy = "log")
+    private List<BorrowEntity> borrows = new ArrayList<>();
 }

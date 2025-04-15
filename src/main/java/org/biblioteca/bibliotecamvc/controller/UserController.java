@@ -2,11 +2,16 @@ package org.biblioteca.bibliotecamvc.controller;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.biblioteca.bibliotecamvc.business.dto.LibraryDTO;
 import org.biblioteca.bibliotecamvc.business.dto.UserRegisterDTO;
-import org.biblioteca.bibliotecamvc.business.exception.book.BookNotFoundException;
+import org.biblioteca.bibliotecamvc.business.exception.book.BookIsBookedException;
+import org.biblioteca.bibliotecamvc.business.exception.borrow.BorrowNotFoundException;
+import org.biblioteca.bibliotecamvc.business.exception.log.LogNotFoundException;
+import org.biblioteca.bibliotecamvc.business.exception.user.UserAlreadyBookedThisBookException;
+import org.biblioteca.bibliotecamvc.business.exception.user.UserAlreadyExistsException;
+import org.biblioteca.bibliotecamvc.business.exception.user.UserNotFoundException;
 import org.biblioteca.bibliotecamvc.business.service.BookService;
 import org.biblioteca.bibliotecamvc.business.service.LibraryService;
+import org.biblioteca.bibliotecamvc.business.service.LogService;
 import org.biblioteca.bibliotecamvc.business.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class UserController {
     private final UserService userService;
     private final BookService bookService;
+    private final LogService logService;
     private final LibraryService libraryService;
 
     @GetMapping("/user/admin/userAdminMain")
@@ -35,7 +41,12 @@ public class UserController {
     }
     @PostMapping("/user/admin/saveUser")
     public String saveUserAdminMain(@ModelAttribute("UserRegisterDTO") UserRegisterDTO register){
-        userService.register(register);
+        try {
+            userService.register(register);
+        }catch (UserAlreadyExistsException e){
+            System.err.println(e.getMessage());
+            return "/user/admin/saveUser";
+        }
         return "redirect:/user/admin/userAdminMain";
     }
 
@@ -51,18 +62,18 @@ public class UserController {
         try {
             Integer userID = (Integer) session.getAttribute("UserID");
             userService.update(userDTO, userID);
-        } catch (BookNotFoundException e) {
-            System.err.println("No se ha encontrado el libro");
+        } catch (UserNotFoundException e) {
+            System.err.println(e.getMessage());
         }
 
         return "redirect:/user/admin/userAdminMain";
     }
 
     @GetMapping("/user/admin/deleteUser/{id}")
-    public String deleteBook(@PathVariable("id") String id) {
+    public String deleteUser(@PathVariable("id") String id) {
         try {
             userService.delete(id);
-        } catch (BookNotFoundException e) {
+        } catch (UserNotFoundException e) {
             System.err.println("No se ha encontrado el libro");
         }
         return "redirect:/user/admin/userAdminMain";
@@ -95,8 +106,8 @@ public class UserController {
         try {
             Integer userID = (Integer) session.getAttribute("ActualUser");
             userService.update(userDTO, userID);
-        } catch (BookNotFoundException e) {
-            System.err.println("No se ha encontrado el libro");
+        } catch (UserNotFoundException e) {
+            System.err.println(e.getMessage());
         }
 
         return "redirect:/user/user/userMain";
@@ -105,21 +116,32 @@ public class UserController {
     @GetMapping("user/borrow/book/{id}")
     public String borrowBook(@PathVariable("id") String id, HttpSession session) {
         Integer userID = (Integer) session.getAttribute("ActualUser");
-        Integer libraryiD = (Integer) session.getAttribute("LibraryID");
-        userService.borrowBook(id, userID);
-        return "redirect:/user/user/userBooksLibrary/"+libraryiD;
+        Integer libraryId = (Integer) session.getAttribute("LibraryID");
+        try {
+            libraryService.borrowBook(libraryId,id,userID);
+        }catch (LogNotFoundException | UserNotFoundException | BookIsBookedException | UserAlreadyBookedThisBookException e){
+            System.err.println(e.getMessage());
+        }
+
+        return "redirect:/user/user/userBooksLibrary/"+libraryId;
     }
 
     @GetMapping("user/return/book/{id}")
     public String returnBook(@PathVariable("id") String id, HttpSession session) {
         Integer userID = (Integer) session.getAttribute("ActualUser");
-        userService.returnBook(id, userID);
+        Integer libraryId = (Integer) session.getAttribute("LibraryID");
+        try {
+            libraryService.returnBook(libraryId,id, userID);
+        }catch (LogNotFoundException | BorrowNotFoundException e){
+            System.err.println(e.getMessage());
+        }
+
         return "redirect:/user/user/userMain";
     }
 
     @GetMapping("/user/user/userBooksLibrary/{id}")
     public String enterLibraryMain(Model model, @PathVariable Integer id, HttpSession session) {
-        model.addAttribute("books", libraryService.getAllBooksAvailableById(id));
+        model.addAttribute("books", logService.getAllBooksAvailableByLibraryId(id));
         session.setAttribute("LibraryID",id);
         return "/user/user/userBooksLibrary";
     }
@@ -127,7 +149,7 @@ public class UserController {
     @GetMapping("/user/user/userLog")
     public String userLog(Model model, HttpSession session) {
         Integer userID = (Integer) session.getAttribute("ActualUser");
-        model.addAttribute("books", bookService.getLog(userID));
+        model.addAttribute("logs", logService.getAllLogsByUserId(userID));
         return "/user/user/userLog";
     }
 

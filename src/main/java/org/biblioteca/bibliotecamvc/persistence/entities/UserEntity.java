@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,5 +28,6 @@ public class UserEntity {
      @Column(name = "deleted")
      private Boolean deleted = false;
 
-
+    @OneToMany(mappedBy = "user")
+    private List<BorrowEntity> borrows = new ArrayList<>();
 }

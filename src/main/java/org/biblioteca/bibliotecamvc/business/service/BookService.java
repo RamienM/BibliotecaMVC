@@ -27,16 +27,10 @@ public class BookService implements BasicCRUD<BookDTO,String> {
         return bookDTOs;
     }
 
-    //TODO se tiene que cambiar
+
     public List<BookDTO> getAllBooksByUserId(Integer user_id) {
         List<BookDTO> books = new ArrayList<>();
-        bookRepository.getAllByUsers_Id(user_id).forEach(book -> books.add(bookMapper.toDTO(book)));
-        return books;
-    }
-    //TODO se tiene que cambiar
-    public List<BookDTO> getLog(Integer id) {
-        List<BookDTO> books = new ArrayList<>();
-        bookRepository.getLogs(id).forEach(book -> books.add(bookMapper.toDTO(book)));
+        bookRepository.getAllBooksByUser(user_id).forEach(book -> books.add(bookMapper.toDTO(book)));
         return books;
     }
 
