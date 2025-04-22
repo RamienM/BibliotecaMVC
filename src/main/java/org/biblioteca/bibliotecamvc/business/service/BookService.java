@@ -45,7 +45,9 @@ public class BookService implements BasicCRUD<BookDTO,String> {
     public BookDTO save(BookDTO book) {
         Optional<BookEntity> bookEntity = bookRepository.getByIsbn(book.getIsbn());
         if (bookEntity.isPresent()) throw new BookAlreadyExistsException("Book already exists");
-        return bookMapper.toDTO(bookRepository.save(bookMapper.toEntity(book)));
+        BookEntity bookToEntity = bookMapper.toEntity(book);
+        BookEntity savedEntity = bookRepository.save(bookToEntity);
+        return bookMapper.toDTO(savedEntity);
     }
 
     @Override
