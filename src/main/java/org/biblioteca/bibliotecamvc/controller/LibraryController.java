@@ -32,7 +32,7 @@ public class LibraryController {
         return "/library/libraryMain";
     }
 
-    @GetMapping("library/enter/enterLibraryMain/{id}")
+    @GetMapping("/library/enter/enterLibraryMain/{id}")
     public String enterLibraryMain(Model model, @PathVariable Integer id, HttpSession session) {
         model.addAttribute("books", logService.getAllBooksAvailableByLibraryId(id));
         session.setAttribute("LibraryID",id);
@@ -82,6 +82,7 @@ public class LibraryController {
             model.addAttribute("LibraryDTO", libraryService.findById(id));
         } catch (LibraryNotFoundException e) {
             System.err.println("No se ha encontrado la biblioteca");
+            model.addAttribute("LibraryDTO", new LibraryDTO());
         }
 
         return "/library/updateLibrary";

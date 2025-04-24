@@ -47,6 +47,7 @@ public class BookController {
             model.addAttribute("BookDTO", bookService.findById(id));
         } catch (BookNotFoundException e) {
             System.err.println("No se ha encontrado el libro");
+            return "redirect:/book/bookMain";
         }
 
         return "/book/updateBook";

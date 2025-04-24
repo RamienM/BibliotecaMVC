@@ -35,7 +35,7 @@ public class IndexController {
         return "/auth/register";
     }
     @PostMapping("/auth/register")
-    public String registro(@ModelAttribute("UserRegisterDTO") UserRegisterDTO register){
+    public String register(@ModelAttribute("UserRegisterDTO") UserRegisterDTO register){
         userService.register(register);
         return "redirect:/";
     }
