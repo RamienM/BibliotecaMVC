@@ -4,9 +4,14 @@ import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.biblioteca.bibliotecamvc.business.dto.BookDTO;
 import org.biblioteca.bibliotecamvc.business.dto.LibraryDTO;
+import org.biblioteca.bibliotecamvc.business.exception.book.BookNotFoundException;
+import org.biblioteca.bibliotecamvc.business.exception.library.LibraryAlreadyExistException;
+import org.biblioteca.bibliotecamvc.business.exception.library.LibraryAlreadyHaveThatBook;
 import org.biblioteca.bibliotecamvc.business.exception.library.LibraryNotFoundException;
+import org.biblioteca.bibliotecamvc.business.exception.log.LogNotFoundException;
 import org.biblioteca.bibliotecamvc.business.service.BookService;
 import org.biblioteca.bibliotecamvc.business.service.LibraryService;
+import org.biblioteca.bibliotecamvc.business.service.LogService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @AllArgsConstructor
 public class LibraryController {
     private LibraryService libraryService;
+    private LogService logService;
     private BookService bookService;
 
     @GetMapping("/library/libraryMain")
@@ -26,9 +32,9 @@ public class LibraryController {
         return "/library/libraryMain";
     }
 
-    @GetMapping("library/enter/enterLibraryMain/{id}")
+    @GetMapping("/library/enter/enterLibraryMain/{id}")
     public String enterLibraryMain(Model model, @PathVariable Integer id, HttpSession session) {
-        model.addAttribute("books", libraryService.getAllBooksById(id));
+        model.addAttribute("books", logService.getAllBooksAvailableByLibraryId(id));
         session.setAttribute("LibraryID",id);
         return "/library/enter/enterLibraryMain";
     }
@@ -42,11 +48,15 @@ public class LibraryController {
     @PostMapping("/library/saveLibrary")
     public String saveLibrary(Model model, @ModelAttribute("LibraryDTO") LibraryDTO library) {
         model.addAttribute("LibraryDTO", new LibraryDTO());
-        libraryService.save(library);
+        try {
+            libraryService.save(library);
+        }catch (LibraryAlreadyExistException e){
+            System.err.println(e.getMessage());
+        }
+
         return "redirect:/library/libraryMain";
     }
 
-    //TODO hacerlo desplegable para seleccionar el libro :)
     @GetMapping("/library/enter/addBook")
     public String addBook(Model model) {
         model.addAttribute("BookDTO", new BookDTO());
@@ -55,10 +65,14 @@ public class LibraryController {
     }
 
     @PostMapping("/library/enter/addBook")
-    public String addBook(Model model, @ModelAttribute("BookDTO") BookDTO book, HttpSession session) {
+    public String addBook(@ModelAttribute("BookDTO") BookDTO book, HttpSession session) {
         Integer libraryID = (Integer) session.getAttribute("LibraryID");
-        libraryService.addBook(libraryID,book.getIsbn());
-        model.addAttribute("books", libraryService.getAllBooksById(libraryID));
+        try {
+            libraryService.addBook(libraryID,book.getIsbn());
+        }catch (LibraryNotFoundException | BookNotFoundException | LibraryAlreadyHaveThatBook e){
+            System.err.println(e.getMessage());
+        }
+
         return "redirect:/library/enter/enterLibraryMain/"+libraryID;
     }
 
@@ -68,6 +82,7 @@ public class LibraryController {
             model.addAttribute("LibraryDTO", libraryService.findById(id));
         } catch (LibraryNotFoundException e) {
             System.err.println("No se ha encontrado la biblioteca");
+            model.addAttribute("LibraryDTO", new LibraryDTO());
         }
 
         return "/library/updateLibrary";
@@ -89,7 +104,7 @@ public class LibraryController {
         try {
             libraryService.delete(id);
         } catch (LibraryNotFoundException e) {
-            System.err.println("No se ha encontrado la biblioteca");
+            System.err.println(e.getMessage());
         }
         return "redirect:/library/libraryMain";
     }
@@ -98,9 +113,9 @@ public class LibraryController {
     public String deleteLibraryEnter(@PathVariable String id, HttpSession session) {
         Integer libraryID = (Integer) session.getAttribute("LibraryID");
         try {
-            libraryService.deleteBook(libraryID,id); //TODO change to quit book
-        } catch (LibraryNotFoundException e) {
-            System.err.println("No se ha encontrado la biblioteca");
+            libraryService.deleteBook(libraryID,id);
+        } catch (LogNotFoundException e) {
+            System.err.println(e.getMessage());
         }
         return "redirect:/library/enter/enterLibraryMain/"+libraryID;
     }

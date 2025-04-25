@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Añadir</title>
+    <title>Biblioteca</title>
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
@@ -28,6 +28,17 @@
                 <td><label>Contraseña</label></td>
             </tr>
             <tr><td><input type="text" th:field="*{password}"></td></tr>
+            <tr>
+                <td><label>Es Administrador?</label></td>
+            </tr>
+            <tr>
+                <td>
+                    <select th:field="*{admin}">
+                        <option value="false">No</option>
+                        <option value="true">Sí</option>
+                    </select>
+                </td>
+            </tr>
         </table>
         <div class="row">
             <div class="mx-auto">
@@ -35,6 +46,7 @@
                 <a class="btn btn-danger" href="/user/admin/userAdminMain">Volver</a>
             </div>
         </div>
+
     </form>
 
 </div>

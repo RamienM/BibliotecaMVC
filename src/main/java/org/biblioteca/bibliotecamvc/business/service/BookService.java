@@ -20,6 +20,10 @@ public class BookService implements BasicCRUD<BookDTO,String> {
     private final BookJPARepository bookRepository;
     private final BookMapper bookMapper;
 
+    /**
+     * Obtención de todos los libros, no se incluyen los libros "eliminados".
+     * @return Lista de libros
+     */
     @Override
     public List<BookDTO> findAll() {
         List<BookDTO> bookDTOs = new ArrayList<>();
@@ -27,19 +31,22 @@ public class BookService implements BasicCRUD<BookDTO,String> {
         return bookDTOs;
     }
 
-    //TODO se tiene que cambiar
+    /**
+     * Devuelve todos los libros que tienen en posesión un usuario.
+     * @param user_id ID del usuario
+     * @return Lista de libros en posesion
+     */
     public List<BookDTO> getAllBooksByUserId(Integer user_id) {
         List<BookDTO> books = new ArrayList<>();
-        bookRepository.getAllByUsers_Id(user_id).forEach(book -> books.add(bookMapper.toDTO(book)));
-        return books;
-    }
-    //TODO se tiene que cambiar
-    public List<BookDTO> getLog(Integer id) {
-        List<BookDTO> books = new ArrayList<>();
-        bookRepository.getLogs(id).forEach(book -> books.add(bookMapper.toDTO(book)));
+        bookRepository.getAllBooksByUser(user_id).forEach(book -> books.add(bookMapper.toDTO(book)));
         return books;
     }
 
+    /**
+     * Se obtiene un libro en concreto.
+     * @param id ISBN del libro
+     * @return Devuelve el libro
+     */
     @Override
     public BookDTO findById(String id) {
         Optional<BookEntity> bookEntity = bookRepository.getByIsbn(id);
@@ -47,13 +54,26 @@ public class BookService implements BasicCRUD<BookDTO,String> {
         return bookMapper.toDTO(bookEntity.get());
     }
 
+    /**
+     * Permite la creación de nuevos libros. Se comprueba que el libro no exista ya en la biblioteca.
+     * @param book Libro que se desea añadir
+     * @return Libro guardado
+     */
     @Override
     public BookDTO save(BookDTO book) {
         Optional<BookEntity> bookEntity = bookRepository.getByIsbn(book.getIsbn());
         if (bookEntity.isPresent()) throw new BookAlreadyExistsException("Book already exists");
-        return bookMapper.toDTO(bookRepository.save(bookMapper.toEntity(book)));
+        BookEntity bookToEntity = bookMapper.toEntity(book);
+        BookEntity savedEntity = bookRepository.save(bookToEntity);
+        return bookMapper.toDTO(savedEntity);
     }
 
+    /**
+     * Permite la actualización de un libro concreto.
+     * @param book Datos que se desea actualizar.
+     * @param id ISBN del libro a actualizar
+     * @return Devuelve el libro actualizado
+     */
     @Override
     public BookDTO update(BookDTO book, String id) {
         Optional<BookEntity> bookEntity = bookRepository.getByIsbn(id);
@@ -65,6 +85,10 @@ public class BookService implements BasicCRUD<BookDTO,String> {
         return bookMapper.toDTO(bookRepository.save(oldBook));
     }
 
+    /**
+     * Simula la eliminación de un libro.
+     * @param id ISBN del libro a eliminar
+     */
     @Override
     public void delete(String id) {
         Optional<BookEntity> bookEntity = bookRepository.getByIsbn(id);

@@ -2,6 +2,7 @@ package org.biblioteca.bibliotecamvc.controller;
 
 import lombok.AllArgsConstructor;
 import org.biblioteca.bibliotecamvc.business.dto.BookDTO;
+import org.biblioteca.bibliotecamvc.business.exception.book.BookAlreadyExistsException;
 import org.biblioteca.bibliotecamvc.business.exception.book.BookNotFoundException;
 import org.biblioteca.bibliotecamvc.business.service.BookService;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,12 @@ public class BookController {
     @PostMapping("/book/saveBook")
     public String saveBook(Model model, @ModelAttribute("BookDTO") BookDTO book) {
         model.addAttribute("BookDTO", new BookDTO());
-        bookService.save(book);
+        try {
+            bookService.save(book);
+        }catch (BookAlreadyExistsException e){
+            System.err.println(e.getMessage());
+        }
+
         return "redirect:/book/bookMain";
     }
 
@@ -41,6 +47,7 @@ public class BookController {
             model.addAttribute("BookDTO", bookService.findById(id));
         } catch (BookNotFoundException e) {
             System.err.println("No se ha encontrado el libro");
+            return "redirect:/book/bookMain";
         }
 
         return "/book/updateBook";

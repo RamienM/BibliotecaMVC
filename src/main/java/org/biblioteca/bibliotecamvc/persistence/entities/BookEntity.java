@@ -24,19 +24,8 @@ public class BookEntity {
     @Column(name = "author")
     private String author;
 
-    @Column(name = "booked")
-    private Boolean booked = false; //Lo ideal es un enumerado, va a desaparecer
-
     @Column(name = "deleted")
     private Boolean deleted = false;
-
-    @ManyToMany
-    @JoinTable(
-            name = "book_user",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-            )
-    private List<UserEntity> users = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "bookEntity")

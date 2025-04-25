@@ -14,7 +14,6 @@ public class BookMapper implements Mapper<BookDTO, BookEntity> {
         dto.setAuthor(entity.getAuthor());
         dto.setTitle(entity.getTitle());
         dto.setIsbn(entity.getIsbn());
-        dto.setBooked(entity.getBooked());
         return dto;
     }
 
