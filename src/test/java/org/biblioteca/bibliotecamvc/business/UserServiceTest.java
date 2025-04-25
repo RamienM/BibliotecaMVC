@@ -34,6 +34,7 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+
     @Test
     void saveUserTest() {
         //Arrange
@@ -64,7 +65,7 @@ public class UserServiceTest {
 
         //Act
 
-        var resp = Assertions.assertThrows(UserAlreadyExistsException.class, () -> {userService.register(userRegisterDTO);});
+        var resp = Assertions.assertThrows(UserAlreadyExistsException.class, () -> userService.register(userRegisterDTO));
 
         //Assert
         Assertions.assertNotNull(resp);
@@ -72,7 +73,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void fingByIdTest() {
+    void findByIdTest() {
         //Arrange
         UserDTO userDTO = new UserDTO();
         String id = "1";
@@ -90,14 +91,14 @@ public class UserServiceTest {
     }
 
     @Test
-    void fingByIdWhenUserNotFoundTest() {
+    void findByIdWhenUserNotFoundTest() {
         //Arrange
         String id = "1";
 
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
         //Act
-        var resp = Assertions.assertThrows(UserNotFoundException.class, () -> {userService.findById(id);});
+        var resp = Assertions.assertThrows(UserNotFoundException.class, () -> userService.findById(id));
 
         //Assert
         Assertions.assertNotNull(resp);
@@ -131,14 +132,13 @@ public class UserServiceTest {
     @Test
     void loginWhenUserNotFoundTest() {
         //Arrange
-        UserDTO userDTO = new UserDTO();
         UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
         userRegisterDTO.setUsername("username");
 
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
         //Act
-        var resp = Assertions.assertThrows(UserNotFoundException.class, () -> {userService.login(userRegisterDTO);});
+        var resp = Assertions.assertThrows(UserNotFoundException.class, () -> userService.login(userRegisterDTO));
 
         //Assert
         Assertions.assertNotNull(resp);
@@ -157,7 +157,7 @@ public class UserServiceTest {
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userEntity));
 
         //Act
-        var resp = Assertions.assertThrows(UserIsDeletedException.class, () -> {userService.login(userRegisterDTO);});
+        var resp = Assertions.assertThrows(UserIsDeletedException.class, () -> userService.login(userRegisterDTO));
 
         //Assert
         Assertions.assertNotNull(resp);
@@ -167,7 +167,6 @@ public class UserServiceTest {
     @Test
     void loginWhenPasswordDontMatchTest() {
         //Arrange
-        UserDTO userDTO = new UserDTO();
         UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
         userRegisterDTO.setUsername("username");
         userRegisterDTO.setPassword("password");
@@ -179,7 +178,7 @@ public class UserServiceTest {
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userEntity));
 
         //Act
-        var resp = Assertions.assertThrows(PasswordNotMatchException.class, () -> {userService.login(userRegisterDTO);});
+        var resp = Assertions.assertThrows(PasswordNotMatchException.class, () -> userService.login(userRegisterDTO));
 
         //Assert
         Assertions.assertNotNull(resp);
@@ -220,7 +219,7 @@ public class UserServiceTest {
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
         //Act
-        var resp = Assertions.assertThrows(UserNotFoundException.class, () -> {userService.update(userDTO,id);});
+        var resp = Assertions.assertThrows(UserNotFoundException.class, () -> userService.update(userDTO,id));
 
         //Assert
         Assertions.assertNotNull(resp);
@@ -259,7 +258,7 @@ public class UserServiceTest {
         when(userRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         //Act
-        var resp = Assertions.assertThrows(UserNotFoundException.class, () -> {userService.update(userRegisterDTO,id);});
+        var resp = Assertions.assertThrows(UserNotFoundException.class, () -> userService.update(userRegisterDTO,id));
 
         //Assert
         Assertions.assertNotNull(resp);
@@ -288,7 +287,7 @@ public class UserServiceTest {
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
         //Act
-        var resp = Assertions.assertThrows(UserNotFoundException.class, () -> {userService.delete(id);});
+        var resp = Assertions.assertThrows(UserNotFoundException.class, () -> userService.delete(id));
 
         //Assert
         Assertions.assertNotNull(resp);

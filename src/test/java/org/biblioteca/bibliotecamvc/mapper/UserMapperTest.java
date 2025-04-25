@@ -48,7 +48,7 @@ public class UserMapperTest {
     }
 
     @Test
-    void dtoRegistertoEntityTest(){
+    void dtoRegisterToEntityTest(){
         // Arrange
         UserRegisterDTO userDTO = new UserRegisterDTO();
         userDTO.setUsername("Test User");

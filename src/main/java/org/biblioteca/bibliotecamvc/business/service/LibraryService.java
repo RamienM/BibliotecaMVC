@@ -31,7 +31,10 @@ public class LibraryService implements BasicCRUD<LibraryDTO, Integer> {
     private final UserJPARepository userJPARepository;
     private final BorrowJPARepository borrowJPARepository;
 
-
+    /**
+     * Permite la obtención de todas la bibliotecas, se excluyen las "eliminadas".
+     * @return Devuelve una lista de bibliotecas
+     */
     @Override
     public List<LibraryDTO> findAll() {
         List<LibraryDTO> libraryDTOs = new ArrayList<>();
@@ -39,6 +42,11 @@ public class LibraryService implements BasicCRUD<LibraryDTO, Integer> {
         return libraryDTOs;
     }
 
+    /**
+     * Permite la obtención de una biblioteca concreta.
+     * @param id    ID de la biblioteca
+     * @return  Devuelve la biblioteca solicitada
+     */
     @Override
     public LibraryDTO findById(Integer id) {
         Optional<LibraryEntity> libraryEntity = libraryRepository.findById(id);
@@ -46,7 +54,11 @@ public class LibraryService implements BasicCRUD<LibraryDTO, Integer> {
         return libraryMapper.toDTO(libraryEntity.get());
     }
 
-
+    /**
+     * Permite añadir una biblioteca nueva.
+     * @param libraryDTO Información de la biblioteca
+     * @return Devuelve la biblioteca guardada
+     */
     @Override
     public LibraryDTO save(LibraryDTO libraryDTO) {
         Optional<LibraryEntity> libraryEntity = libraryRepository.findByName(libraryDTO.getName());
@@ -54,7 +66,12 @@ public class LibraryService implements BasicCRUD<LibraryDTO, Integer> {
         return libraryMapper.toDTO(libraryRepository.save(libraryMapper.toEntity(libraryDTO)));
     }
 
-
+    /**
+     * Permite la actualización de una biblioteca concreta.
+     * @param libraryDTO Información a actualizar de la biblioteca
+     * @param id ID de la biblioteca a actualizar
+     * @return Devuelve la biblioteca acutalizada
+     */
     @Override
     public LibraryDTO update(LibraryDTO libraryDTO, Integer id) {
         Optional<LibraryEntity> libraryEntity = libraryRepository.findById(id);
@@ -64,7 +81,10 @@ public class LibraryService implements BasicCRUD<LibraryDTO, Integer> {
         return libraryMapper.toDTO(libraryRepository.save(oldLibrary));
     }
 
-
+    /**
+     * Permite la eliminación de una biblioteca concreta
+     * @param id ID de la biblioteca a eliminar
+     */
     @Override
     public void delete(Integer id) {
         Optional<LibraryEntity> libraryEntity = libraryRepository.findById(id);
@@ -74,6 +94,11 @@ public class LibraryService implements BasicCRUD<LibraryDTO, Integer> {
         libraryRepository.save(oldLibrary);
     }
 
+    /**
+     * Permite añadir un libro concreto a una biblioteca. Se controla que el libro no se encuentre ya en esa biblioteca.
+     * @param id    ID de la biblioteca
+     * @param isbn  ISBN del libro
+     */
     public void addBook(Integer id, String isbn){
         Optional<LibraryEntity> libraryEntity = libraryRepository.findById(id);
         if (libraryEntity.isEmpty()) throw new LibraryNotFoundException("Library not found");
@@ -88,6 +113,11 @@ public class LibraryService implements BasicCRUD<LibraryDTO, Integer> {
         logRepository.save(log);
     }
 
+    /**
+     * Permite eliminar un libro concreto de una biblioteca.
+     * @param id ID de la biblioteca
+     * @param isbn ISBN de la biblioteca
+     */
     public void deleteBook(Integer id, String isbn){
         Optional<LogEntity> logEntity = logRepository.findByLibraryEntity_IdAndBookEntity_Isbn(id, isbn);
         if(logEntity.isEmpty()) throw new LogNotFoundException("Log not found");
@@ -96,6 +126,13 @@ public class LibraryService implements BasicCRUD<LibraryDTO, Integer> {
         logRepository.save(log);
     }
 
+    /**
+     * Permite a un usuario concreto reservar un libro de una biblioteca.
+     * Se controla que el libro no se encuentre reservado y que el usuario no haya reservado el libro con anterioridad
+     * @param libraryId ID de la libreria
+     * @param isbn  ISBN del libro
+     * @param userId ID del usuario
+     */
     public void borrowBook(Integer libraryId, String isbn, Integer userId){
         Optional<LogEntity> logEntity = logRepository.findByLibraryEntity_IdAndBookEntity_Isbn(libraryId,isbn);
         if (logEntity.isEmpty()) throw new LogNotFoundException("Log not found");
@@ -114,6 +151,12 @@ public class LibraryService implements BasicCRUD<LibraryDTO, Integer> {
         logRepository.save(log);
     }
 
+    /**
+     * Permite a un usuario devolver un libro de una biblioteca.
+     * @param libraryId ID de la biblioteca
+     * @param isbn ISBN del libro
+     * @param userId ID del usuario
+     */
     public void returnBook(Integer libraryId, String isbn, Integer userId){
         Optional<LogEntity> logEntity = logRepository.findByLibraryEntity_IdAndBookEntity_Isbn(libraryId,isbn);
         if (logEntity.isEmpty()) throw new LogNotFoundException("Log not found");

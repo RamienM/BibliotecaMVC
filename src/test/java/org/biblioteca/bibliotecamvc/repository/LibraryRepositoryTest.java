@@ -1,7 +1,5 @@
 package org.biblioteca.bibliotecamvc.repository;
 
-import org.biblioteca.bibliotecamvc.persistence.entities.BookEntity;
-import org.biblioteca.bibliotecamvc.persistence.entities.BorrowEntity;
 import org.biblioteca.bibliotecamvc.persistence.entities.LibraryEntity;
 import org.biblioteca.bibliotecamvc.persistence.repository.LibraryJPARepository;
 import org.junit.jupiter.api.Assertions;

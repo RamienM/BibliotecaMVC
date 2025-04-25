@@ -62,7 +62,7 @@ public class BookServiceTest {
 
         when(bookRepository.getByIsbn(any(String.class))).thenReturn(Optional.of(new BookEntity()));
         //Act
-        var resp = Assertions.assertThrows(BookAlreadyExistsException.class, () -> {bookService.save(bookDTO);});
+        var resp = Assertions.assertThrows(BookAlreadyExistsException.class, () -> bookService.save(bookDTO));
         //Assert
         Assertions.assertNotNull(resp);
         verify(bookRepository, times(1)).getByIsbn(any(String.class));
@@ -97,7 +97,7 @@ public class BookServiceTest {
         when(bookRepository.getByIsbn(any(String.class))).thenReturn(Optional.empty());
         //Act
 
-        var resp = Assertions.assertThrows(BookNotFoundException.class, () -> {bookService.findById(bookDTO.getIsbn());});
+        var resp = Assertions.assertThrows(BookNotFoundException.class, () -> bookService.findById(bookDTO.getIsbn()));
 
         //Assert
         Assertions.assertNotNull(resp);
@@ -133,7 +133,7 @@ public class BookServiceTest {
 
         when(bookRepository.getByIsbn(any(String.class))).thenReturn(Optional.empty());
         //Act
-        var resp = Assertions.assertThrows(BookNotFoundException.class, () -> {bookService.update(bookDTO, bookDTO.getIsbn());});
+        var resp = Assertions.assertThrows(BookNotFoundException.class, () -> bookService.update(bookDTO, bookDTO.getIsbn()));
 
         //Assert
         Assertions.assertNotNull(resp);
@@ -160,7 +160,7 @@ public class BookServiceTest {
 
         when(bookRepository.getByIsbn(any(String.class))).thenReturn(Optional.empty());
         //Act
-        var resp = Assertions.assertThrows(BookNotFoundException.class, () -> {bookService.delete(isbn);});
+        var resp = Assertions.assertThrows(BookNotFoundException.class, () -> bookService.delete(isbn));
 
         //Assert
         Assertions.assertNotNull(resp);
